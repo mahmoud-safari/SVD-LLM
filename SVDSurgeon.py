@@ -503,8 +503,7 @@ def collect_spectral_fisher_in_chunks(model, calib_loader, dev,
 
 # ============================================================
 
-def whitening_obs(model_name, model, calib_loader, profiling_mat, ratio, dev,
-                  obs_extra_drops=8, obs_damping=1e-5, obs_hdamping=1e-1, obs_scale=1.0, alpha=0.1,
+def whitening_obs(model_name, model, calib_loader, profiling_mat, ratio, dev, obs_damping=1e-5, obs_hdamping=1e-1, obs_scale=1.0, alpha=0.1,
                   select_by_loss=True, obs_batches=16, hbar_save_path=None, reuse_hbars=False):
     """
     Drop-in companion to whitening().
@@ -514,7 +513,6 @@ def whitening_obs(model_name, model, calib_loader, profiling_mat, ratio, dev,
     low-rank factors are assembled.
 
     Extra arguments vs whitening():
-      obs_extra_drops : candidate pool beyond rank  (rank + obs_extra_drops = full_k)
       obs_damping     : diagonal damping for H_SS solve
       obs_scale       : step-size scalar for the correction delta
                         (pass -1 to use automatic dynamic scaling)
@@ -725,8 +723,8 @@ def whitening_obs(model_name, model, calib_loader, profiling_mat, ratio, dev,
 
 
 
-def collect_hbars_only(model_name, model, calib_loader, profiling_mat, ratio, dev,
-                       obs_extra_drops=8, obs_batches=16, alpha=0.1,
+def collect_hbars_only(model_name, model, calib_loader, profiling_mat, ratio, 
+                       dev, obs_batches=16, alpha=0.1,
                        hbar_save_path=None, reuse_hbars=False,
                        chunk_id=0, num_chunks=1):
     """
@@ -1334,7 +1332,6 @@ if __name__ == '__main__':
     parser.add_argument('--step', type=int, default=4)
     parser.add_argument('--lora', type=str, default=None)
 
-    parser.add_argument('--obs_extra_drops', type=int,   default=8)
     parser.add_argument('--obs_damping',     type=float, default=1e-5)
     parser.add_argument('--obs_scale',       type=float, default=1.0,
                         help='Step-size for OBS delta. Pass -1 for automatic scaling.')
@@ -1434,7 +1431,6 @@ if __name__ == '__main__':
         t_start_alg = time.time()
         whitening_obs(
             args.model, model, cali_obs_data, profiling_mat, args.ratio, args.DEV, # profiling_mat
-            obs_extra_drops=args.obs_extra_drops,
             obs_damping=args.obs_damping,
             obs_hdamping=args.obs_hdamping,
             obs_scale=args.obs_scale,
@@ -1487,7 +1483,6 @@ if __name__ == '__main__':
 
         collect_hbars_only(
             args.model, model, cali_obs_data, profiling_mat, args.ratio, args.DEV, # profiling_mat
-            obs_extra_drops=args.obs_extra_drops,
             obs_batches=args.obs_batches,
             alpha=args.alpha,
             hbar_save_path=args.hbar_save_path,
