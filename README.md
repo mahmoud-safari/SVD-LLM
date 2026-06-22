@@ -1,4 +1,4 @@
-# SVD-LLM + SVD-Surgeon
+# SVD-Surgeon: Optimal Singular-Value Surgery for Large Language Model Compression
 
 This fork applies [SVD-Surgeon](https://github.com/mahmoud-safari/SVD-Surgeon) 
 on top of [SVD-LLM](https://github.com/AIoT-MLSys-Lab/SVD-LLM).
