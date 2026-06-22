@@ -154,7 +154,7 @@ def get_vanilla_svd_save_path(args):
 
 
 # ============================================================
-# OBS helper functions (ported from GPT-2 code)
+# OBS helper functions
 # ============================================================
 
 def spectral_grad_from_weight_grad(G, U, Vh, full_k):
@@ -745,7 +745,7 @@ def collect_hbars_only(model_name, model, calib_loader, profiling_mat, ratio, de
     print("Starting Hbar collection only (Steps 1 and 2 of whitening_obs)...")
 
     # ------------------------------------------------------------------
-    # Step 1: collect SVD info (identical to whitening_obs)
+    # Step 1: collect SVD info
     # ------------------------------------------------------------------
     layer_svd_info = {}
     with torch.no_grad():
@@ -792,7 +792,7 @@ def collect_hbars_only(model_name, model, calib_loader, profiling_mat, ratio, de
                 torch.cuda.empty_cache()
 
     # ------------------------------------------------------------------
-    # Step 2: collect spectral Fisher (identical to whitening_obs)
+    # Step 2: collect spectral Fisher
     # ------------------------------------------------------------------
     print("Collecting spectral Fisher for OBS correction ...")
     collect_spectral_fisher_in_chunks(
