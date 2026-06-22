@@ -12,17 +12,26 @@ sys.path.append(current_path)
 def get_calib_train_data(name, tokenizer, nsamples, seqlen=2048, seed=3, batch_size=1, dataset_cache_dir=None):
     import random
     random.seed(seed)
+
     cache_file = (
-        f"cache/{name}_{nsamples}_{seqlen}_{seed}_{batch_size}.pt"
+    f"cache/{name}_{nsamples}_{seqlen}_{seed}_{batch_size}"
+    f"_{tokenizer.__class__.__name__}.pt"
     )
+
     nsamples += 1 #############################
     if not os.path.exists("cache"):
-        os.makedirs("cache")
+        os.makedirs("cache", exist_ok=True)
+
     if os.path.exists(cache_file):
-        traindataset = torch.load(cache_file)
-        return traindataset
+        try:
+            traindataset = torch.load(cache_file)
+            return traindataset
+        except Exception:
+            print(f"Cache file {cache_file} is corrupted, recomputing...")
+            os.remove(cache_file)
+    
     if name == "c4":
-        traindata = load_dataset("json", data_files="utils/c4-train.json")['train']
+        traindata = load_dataset('allenai/c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train')
         tot_text = "\n\n".join(traindata["text"])
     elif name == "ptb":
         traindata = load_dataset('ptb_text_only', 'penn_treebank', split='train', cache_dir=dataset_cache_dir)
@@ -30,6 +39,7 @@ def get_calib_train_data(name, tokenizer, nsamples, seqlen=2048, seed=3, batch_s
     elif name == "wikitext2":
         traindata = load_dataset("wikitext", "wikitext-2-raw-v1", split="train", cache_dir=dataset_cache_dir)
         tot_text = "\n\n".join(traindata["text"])
+        print(f"Total length of train text: {len(tot_text)}")
     else:
         raise NotImplementedError
     traindataset = []
@@ -47,8 +57,12 @@ def get_calib_train_data(name, tokenizer, nsamples, seqlen=2048, seed=3, batch_s
             inp = trainenc.input_ids[:, :seqlen]
         else:
             inp = torch.cat((inp, trainenc.input_ids[:, :seqlen]), dim=0)
-    torch.save(traindataset, cache_file)
+
+    tmp_file = cache_file + ".tmp"
+    torch.save(traindataset, tmp_file)
+    os.rename(tmp_file, cache_file)
     return traindataset
+
 
 
 
@@ -91,8 +105,17 @@ def get_ptb(nsamples, seed, seqlen, tokenizer, dataset_cache_dir=None):
     return trainloader, testenc
 
 def get_c4(nsamples, seed, seqlen, tokenizer):
-    traindata = load_dataset("json", data_files="utils/c4-train.json")['train']
-    valdata = load_dataset("json", data_files="utils/c4-validation.json")['train']
+
+    traindata = load_dataset(
+        'allenai/c4',
+        data_files={'train': 'en/c4-train.00000-of-01024.json.gz'},
+        split='train'
+    )
+    valdata = load_dataset(
+        'allenai/c4',
+        data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'},
+        split='validation'
+    )
 
     import random
     random.seed(seed)
@@ -153,8 +176,17 @@ def get_ptb_new(nsamples, seed, seqlen, tokenizer, dataset_cache_dir=None):
     return trainloader, testenc
 
 def get_c4_new(nsamples, seed, seqlen, tokenizer):
-    traindata = load_dataset("json", data_files="utils/c4-train.json")['train']
-    valdata = load_dataset("json", data_files="utils/c4-validation.json")['train']
+
+    traindata = load_dataset(
+        'allenai/c4',
+        data_files={'train': 'en/c4-train.00000-of-01024.json.gz'},
+        split='train'
+    )
+    valdata = load_dataset(
+        'allenai/c4',
+        data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'},
+        split='validation'
+    )
 
     import random
     random.seed(seed)
@@ -224,7 +256,7 @@ def get_test_data(name, tokenizer, seq_len=2048, batch_size = 4):
         test_data = load_dataset('ptb_text_only', 'penn_treebank', split='test')
         test_dataset = process_data(test_data, tokenizer, seq_len, 'sentence')
     elif 'c4' in name:
-        test_data = load_dataset("json", data_files="utils/c4-validation.json")['train']
-        test_dataset = process_data(test_data[0:2000], tokenizer, seq_len, 'text')
+        test_data = load_dataset('allenai/c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
+        test_dataset = process_data(test_data.select(range(2000)), tokenizer, seq_len, 'text')
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     return test_loader
