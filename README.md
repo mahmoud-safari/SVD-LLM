@@ -1,3 +1,37 @@
+# SVD-LLM + SVD-Surgeon
+
+This fork applies [SVD-Surgeon](https://github.com/mahmoud-safari/SVD-Surgeon) 
+on top of [SVD-LLM](https://github.com/AIoT-MLSys-Lab/SVD-LLM).
+
+
+For the standalone SVD-Surgeon method, see 
+[https://github.com/mahmoud-safari/SVD-Surgeon](https://github.com/mahmoud-safari/SVD-Surgeon).
+
+## Reproducing Paper Results
+
+```bash
+# SVD-LLM baseline (step 1 = compress, step 4 = evaluate)
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 1 --save_path ./checkpoints
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 4 --model_path svd_llm
+
+# SVD-Surgeon (update only)
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 6 --save_path ./checkpoints \
+    --reuse_hbars --hbar_save_path ./hbars/hbar_opt1.3b.pt
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 4 --model_path svd_surgeon
+
+# SVD-Surgeon (selection + update)
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 6 --save_path ./checkpoints \
+    --select_by_loss --reuse_hbars --hbar_save_path ./hbars/hbar_opt1.3b.pt
+python SVDSurgeon.py --model facebook/opt-1.3b --ratio 0.9 --step 4 --model_path svd_surgeon
+```
+
+---
+
+*The original SVD-LLM README follows below.*
+
+---
+
+
 <p align="center">
 <img src="figures/logo.png" width="30%"> <br>
 </p>
