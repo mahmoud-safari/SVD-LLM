@@ -9,3 +9,10 @@ hbars/*
 logs/*
 results/*
 scripts/*
+.cache/*
+tmp
+
+merge_hbars.py
+plot_ppl.py
+table_ppl.py
+table_ppl_*.py
