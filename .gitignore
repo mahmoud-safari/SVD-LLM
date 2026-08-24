@@ -16,3 +16,12 @@ merge_hbars.py
 plot_ppl.py
 table_ppl.py
 table_ppl_*.py
+
+
+checkpoints_quantized/
+ppl_table.tex
+results_quantized/
+scripts_quantized/
+svd_llm_c4_r0.4_gptq_4.pt
+svd_surgeon_c4_r0.4_gptq_4.pt
+quant_llama_copy.py
