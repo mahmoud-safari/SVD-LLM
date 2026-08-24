@@ -1,11 +1,8 @@
 <h1 align="center">SVD-Surgeon: Optimal Singular-Value Surgery for<br>Large Language Model Compression</h1>
 
-This fork applies [SVD-Surgeon](https://github.com/mahmoud-safari/SVD-Surgeon) 
+This fork applies SVD-Surgeon
 on top of [SVD-LLM](https://github.com/AIoT-MLSys-Lab/SVD-LLM).
 
-
-For the standalone SVD-Surgeon method, see 
-[https://github.com/mahmoud-safari/SVD-Surgeon](https://github.com/mahmoud-safari/SVD-Surgeon).
 
 ## Reproducing Paper Results
 
